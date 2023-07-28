@@ -62,6 +62,7 @@ const SpinButton: React.FC = () => {
 					readOnly
 					className="spinButtonInput"
 					value={count}
+					aria-label={`성인 ${count}`}
 				/>
 				<button
 					onClick={increment}
