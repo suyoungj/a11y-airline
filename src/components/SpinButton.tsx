@@ -1,21 +1,34 @@
-import React, { useState, MouseEvent } from 'react';
+import React, { useState, MouseEvent, useEffect } from 'react';
 import './SpinButton.css';
 
 const SpinButton: React.FC = () => {
 	const [count, setCount] = useState<number>(0);
 	const [isTooltipVisible, setIsTooltipVisible] = useState<boolean>(false);
+	const [announceText, setAnnounceText] = useState<string>();
 
 	const increment = () => {
 		setCount(prevCount => prevCount + 1);
+		setAnnounceText(`성인 승객 추가 ${count + 1}`);
 	};
 
 	const decrement = () => {
 		setCount(prevCount => prevCount - 1);
+		setAnnounceText(`성인 승객 감소 ${count - 1}`);
 	};
 
 	const toggleTooltip = (event: MouseEvent<HTMLDivElement>) => {
 		setIsTooltipVisible(!isTooltipVisible);
 	};
+
+	useEffect(() => {
+		if (announceText) {
+			const liveRegion = document.getElementById('live-region');
+
+			if (liveRegion) {
+				liveRegion.textContent = announceText;
+			}
+		}
+	}, [announceText]);
 
 	return (
 		<section className="spinButtonContainer">
@@ -24,6 +37,7 @@ const SpinButton: React.FC = () => {
 				<div className="spinButtonLabel">
 					<label>성인</label>
 					<div
+						role="tooltip"
 						className="helpIcon"
 						onMouseEnter={toggleTooltip}
 						onMouseLeave={toggleTooltip}
@@ -37,12 +51,13 @@ const SpinButton: React.FC = () => {
 				<button
 					onClick={decrement}
 					className="spinButton"
-					aria-label="탑승자 한 명 줄이기 버튼"
+					aria-label="성인 탑승자 한 명 줄이기"
+					disabled={count === 0}
 				>
 					-
 				</button>
 				<input
-					type="number"
+					type="text"
 					role="spinbutton"
 					readOnly
 					className="spinButtonInput"
@@ -51,10 +66,18 @@ const SpinButton: React.FC = () => {
 				<button
 					onClick={increment}
 					className="spinButton"
-					aria-label="탑승자 한 명 늘리기 버튼"
+					aria-label="성인 탑승자 한 명 늘리기"
+					disabled={count === 3}
 				>
 					+
 				</button>
+				<p
+					id="live-region"
+					className="hidden"
+					aria-atomic="true"
+					aria-live="assertive"
+					aria-relevant="additions"
+				/>
 			</div>
 		</section>
 	);
